@@ -19,6 +19,9 @@
 # misc
 .DS_Store
 *.pem
+*.db
+*.db-shm
+*.db-wal
 
 # debug
 npm-debug.log*
@@ -36,3 +39,5 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+/.vercel/
+/.git-disabled/

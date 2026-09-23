@@ -5,7 +5,8 @@ function toHex(buffer: ArrayBuffer) {
 }
 
 async function sign(value: string) {
-  const secret = process.env.AUTH_SECRET ?? 'local-development-only';
+  const secret = process.env.AUTH_SECRET;
+  if (!secret) throw new Error('AUTH_SECRET is not configured');
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   return toHex(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(value)));
 }

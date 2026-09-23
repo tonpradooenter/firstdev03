@@ -21,7 +21,11 @@ export function AdminDashboard() {
   const loadProducts = useCallback(async () => {
     const response = await fetch('/api/admin/products');
     if (response.status === 401) return setAuthorized(false);
-    if (!response.ok) return setMessage('โหลดข้อมูลสินค้าไม่สำเร็จ');
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({ error: 'โหลดข้อมูลสินค้าไม่สำเร็จ' })) as { error?: string };
+      setAuthorized(true);
+      return setMessage(data.error ?? 'โหลดข้อมูลสินค้าไม่สำเร็จ');
+    }
     setProducts(await response.json());
     setAuthorized(true);
   }, []);
@@ -35,7 +39,10 @@ export function AdminDashboard() {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const response = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: form.get('password') }) });
-    if (!response.ok) return setMessage('รหัสผ่านไม่ถูกต้อง');
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({ error: 'เข้าสู่ระบบไม่สำเร็จ' })) as { error?: string };
+      return setMessage(data.error ?? 'เข้าสู่ระบบไม่สำเร็จ');
+    }
     setMessage('');
     await loadProducts();
   }
